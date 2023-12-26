@@ -1,0 +1,8 @@
+Rules for Geometry folder organization.
+
+1. Sub-Folder name should be Author+Species+Tissue_Num1*Num2*Num3.
+
+2. There should be three catagory of files in each folder.
+  a. One file named exactly as 'heterogeneity.txt', which follows Num1*Num2*Num3 rules and contains the heterogenous cell types. This file could be read into codes directly.
+  b. One file named exactly as 'heterogeneity.vtk', which should always be provided though not used in code. It facilitates the visulization of the geometry before any other actual 3D simulation.This file can be converted from 'heterogeneity.txt'.
+  c. Three, or more files that give the fibre orientation. The rule still remain determined.
