@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
 	// and modify following user-dependent parameters.
 
 	#ifdef VENT
-	double BCL = 1000; // ms
+	double BCL = 1000; // ms   //600-1500 
 	double dt = 0.02; //ms
 	double stopTime = 200*BCL; //ms
 	double stimStrength = -52; // pA/pF
@@ -46,9 +46,9 @@ int main(int argc, char *argv[])
 
 	// --------start simulation--------
 	// note that constructor contains the initializer
-	CellPointer cell = new CellType(MCELL);
+	CellPointer cell = new CellType(EPI);          //EPI   MCELL  ENDO
 	#ifdef VENT
-	FILE *initfile = fopen("SingleCell/TP06InitialValues_HETE_MCELL_ANTI60.dat","w+");
+	FILE *initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","w+");
 	#endif
 	// apply user configuration about dt
 	cell->setDt(dt);

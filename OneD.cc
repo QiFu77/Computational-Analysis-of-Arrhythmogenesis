@@ -36,9 +36,11 @@ using namespace std;
 #define VENT
 // #define HETEROGENEITY 
 
+//***********************后期在做不同抗体的时候要修改下面的构造函数文件名称，以及输出的文件名称。  2、修改tp06.cc文件中的宏定义.  3.BCL 也要修改
 //#define CON
 //#define HETE
-#define HOMO
+//#define HOMO
+#define DOMINATE
 
 int main(int argc, char *argv[])
 {
@@ -67,8 +69,8 @@ int main(int argc, char *argv[])
 
 	// for ventricle
 	#ifdef VENT
-	int numS1 = 20;             //
-	double BCL = 500; // ms   325(2:1)   250(1:1)  1000(EAD) 500(normal) 750(normal)
+	int numS1 = 2;             //
+	double BCL = 1000; // ms   325(2:1)   250(1:1)  1000(EAD) 500(normal) 750(normal)
 	double stopTime = numS1*BCL; //ms
 	double stimStrength = -52.0;//8.78; //8.78;//-8.78; // pA
 	double stimDuration = 1.0;	// ms
@@ -191,6 +193,38 @@ int main(int argc, char *argv[])
 			fclose(initfile);
 		}
 	#endif
+
+	#ifdef DOMINATE
+		FILE* initfile;
+		if (i >= 0 && i < endoCellNum)
+		{
+			strand[i] = new TP06(ENDO);
+			// read in initial values (this is because the original init values is not stable yet)
+			// if the initfile is not available, run the initialization.cc first
+			initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat", "r");
+			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
+			fclose(initfile);
+		}
+		else if (i < endoCellNum + mCellNum)
+		{
+			strand[i] = new TP06(MCELL);
+			// read in initial values (this is because the original init values is not stable yet)
+			// if the initfile is not available, run the initialization.cc first
+			initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat", "r");
+			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
+			fclose(initfile);
+		}
+		else // i < total cellnum
+		{
+			strand[i] = new TP06(EPI);
+			// read in initial values (this is because the original init values is not stable yet)
+			// if the initfile is not available, run the initialization.cc first
+			initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat", "r");
+			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
+			fclose(initfile);
+		}
+	#endif
+
 	#ifdef HOMO
 		FILE* initfile;
 		if (i >= 0 && i < endoCellNum)
@@ -234,6 +268,9 @@ int main(int argc, char *argv[])
 	#endif
 	#ifdef HETE
 		FILE* datafile = fopen("Outputs/VentOneDResults_HETE.dat", "w+");
+	#endif
+	#ifdef DOMINATE
+		FILE* datafile = fopen("Outputs/VentOneDResults_DOMINATE.dat", "w+");
 	#endif
 	#ifdef HOMO
 		FILE* datafile = fopen("Outputs/VentOneDResults_HOMO.dat", "w+");
@@ -327,7 +364,7 @@ int main(int argc, char *argv[])
 
 		// 3. output file. Unfortunately, this part cannot run in paralell
 	//	if( floor(time/BCL) >= numS1 - 10&& step % 10 == 0) // output final cycle only   ,debug并且只输出每0.2ms
-		if(floor(time / BCL) >= numS1 - 2 && step%10 == 0) // 50*dt = 1 ms once
+		if(floor(time / BCL) >= numS1 - 1 && step%10 == 0) // 50*dt = 1 ms once
 		{
 			for(int j = 0; j < cellNum; j++)
 			{

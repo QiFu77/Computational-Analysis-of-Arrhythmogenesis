@@ -31,9 +31,14 @@ using namespace std;
 // #define SAN
 // #define ATRIA
 
+//******************1.选择类型；2.后期可能需要选择BCL；3.在跑易感创的时候需要选择模式，上界、下界、中间阶段；如果用new的话可能numS1需要更改。4.tp06.cc需要随着这个改变
+//******************5.更改上下界，更改model;6.要更换initial文件，有两处地点需要更换。
 #define VENT
+
+//#define WT
 //#define HETE
 // #define HOMO
+#define DOMINATE
 
 
 
@@ -64,7 +69,7 @@ int main(int argc, char *argv[])
 
 	// for ventricle
 	#ifdef VENT
-	int numS1 = 5;
+	int numS1 = 2;
 	double BCL = 1000; // ms
 	double stopTime = numS1*BCL; //ms
 	double stimStrength = -52;//8.78; //8.78;//-8.78; // pA
@@ -128,33 +133,33 @@ int main(int argc, char *argv[])
 	{
 
 		#ifdef VENT
-		// FILE *initfile;
+		 FILE *initfile;
 		if(i >= 0 && i < endoCellNum)
 		{
 			strand[i] = new TP06(ENDO);			
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			// initfile = fopen("SingleCell/ORdInitialValues_SQT6_ENDO.dat","r");
-			// strand[i]->readinAllStates(initfile);
-			// fclose(initfile);
+			 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat","r");
+			 strand[i]->readinAllStates(initfile);
+			 fclose(initfile);
 		}
 		else if (i < endoCellNum + mCellNum)
 		{
 			strand[i] = new TP06(MCELL);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			// initfile = fopen("SingleCell/ORdInitialValues_SQT6_MCELL.dat","r");
-			// strand[i]->readinAllStates(initfile);
-			// fclose(initfile);
+			 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat","r");
+			 strand[i]->readinAllStates(initfile);
+			 fclose(initfile);
 		}
 		else // i < total cellnum
 		{
 			strand[i] = new TP06(EPI);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			// initfile = fopen("SingleCell/ORdInitialValues_SQT6_EPI.dat","r");
-			// strand[i]->readinAllStates(initfile);
-			// fclose(initfile);
+			 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat","r");
+			 strand[i]->readinAllStates(initfile);
+			 fclose(initfile);
 		}	
 		#endif
 
@@ -167,7 +172,7 @@ int main(int argc, char *argv[])
 
 
 	
-	#ifdef VENT
+	#ifdef WT
 	FILE *datafile = fopen("Outputs/VentOneDResults_VW_WT.dat","w+");
 	#endif
 #ifdef HETE
@@ -177,18 +182,22 @@ int main(int argc, char *argv[])
 	FILE* datafile = fopen("Outputs/VentOneDResults_VW_HOMO.dat", "w+");
 #endif
 
+#ifdef DOMINATE
+	FILE* datafile = fopen("OutputsVW/VentOneDResults_VW_DOMINATE.dat", "w+");
+#endif
 	
 
 	double time = 0;
 	int step = 0;
 	FILE* FF;
 
-	double left  = 352;  //200//351.1 ~ 356
-	double right = 352; //800  //351.1 ~ 356
-	// #define MODE1
-	// #define MODE2 //下界
+	double left  = 360;  //200//351.1 ~ 356
+	double right = 800; //800  //351.1 ~ 356
+	//#define MODE1
+	//#define MODE2 //下界
 	#define MODE3 //上界
-	int tempstart = 95;     //原始是60 
+
+	int tempstart = 90;     //原始是60 
 
 	double boundary = 10; //negative
 	double s2startTime = 0.5*(left + right);
@@ -205,7 +214,7 @@ int main(int argc, char *argv[])
 	{
 		// NOTE THAT PREVIOUS FILENAMES ARE USELESS NOW.
 		char VoltFileName[200];
-		sprintf(VoltFileName, "Transmural1D_s2@%.2f.dat", s2startTime);
+		sprintf(VoltFileName, "OutputsVW/Transmural1D_s2@%.2f.dat", s2startTime);
 		FF = fopen(VoltFileName,"w");
 		fclose(FF);
 
@@ -221,26 +230,26 @@ int main(int argc, char *argv[])
 
 				// read in initial values (this is because the original init values is not stable yet)
 				// if the initfile is not available, run the initialization.cc first
-				// initfile = fopen("SingleCell/ORdInitialValues_SQT6_ENDO.dat","r");
-				// strand[i]->readinAllStates(initfile);
-				// fclose(initfile);
+				 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat","r");
+				 strand[i]->readinAllStates(initfile);
+				 fclose(initfile);
 			}
 			else if( strand[i]->getCellType() == MCELL)
 			{
 
 				// read in initial values (this is because the original init values is not stable yet)
 				// if the initfile is not available, run the initialization.cc first
-				// initfile = fopen("SingleCell/ORdInitialValues_SQT6_MCELL.dat","r");
-				// strand[i]->readinAllStates(initfile);
-				// fclose(initfile);
+				 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat","r");
+				 strand[i]->readinAllStates(initfile);
+				 fclose(initfile);
 			}
 			else
 			{
 				// read in initial values (this is because the original init values is not stable yet)
 				// if the initfile is not available, run the initialization.cc first
-				// initfile = fopen("SingleCell/ORdInitialValues_SQT6_EPI.dat","r");
-				// strand[i]->readinAllStates(initfile);
-				// fclose(initfile);
+				 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat","r");
+				 strand[i]->readinAllStates(initfile);
+				 fclose(initfile);
 			}
 		}
 

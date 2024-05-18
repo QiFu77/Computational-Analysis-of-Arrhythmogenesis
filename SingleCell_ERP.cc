@@ -23,9 +23,10 @@ using namespace std;
 // #define ATRIA
 #define VENTRICLE
 #define EPSILON 1e-7
-#define ENDO1
+//*********************************1.选择构造文件细胞，注意有两处，S1和S2两处地方都要选择********************2.下面还需要修改输出文件的名字。3.修改tp06.cc里面的文件，确认是处于病理状态还是药理状态。
+//#define ENDO1
 // #define EPI1
-// #define MCELL1
+#define MCELL1
 
 int main(int argc, char *argv[])
 {
@@ -73,31 +74,25 @@ int main(int argc, char *argv[])
 
 	#ifdef EPI1
 	CellPointer cell = new CellType(EPI);
-	initfile = fopen("SingleCell/TP06InitialValues_HOMO_EPI_ANTI60.dat","r"); // NOTE THERE ARE TWO INIT FILES TO BE CHANGED!!!
+	initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","r"); // NOTE THERE ARE TWO INIT FILES TO BE CHANGED!!!
 	cell->readinAllStates(initfile);
 	#endif 
 
 	#ifdef ENDO1
 	CellPointer cell = new CellType(ENDO);
-	initfile = fopen("SingleCell/TP06InitialValues_HOMO_ENDO_ANTI60.dat","r");
+	initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO_antibody60.dat","r");
 	cell->readinAllStates(initfile);
 	#endif 
 
 	#ifdef MCELL1
 	CellPointer cell = new CellType(MCELL);
-	initfile = fopen("SingleCell/TP06InitialValues_HOMO_MCELL_ANTI60.dat","r");
+	initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL_antibody60.dat","r");
 	cell->readinAllStates(initfile);
 	#endif 
 
-
-
-
-
-
-
 	#ifdef VENTRICLE
-	FILE *datafile = fopen("Outputs/VentERP_data.dat","w+");
-	FILE *erpfile = fopen("Outputs/VentERP.dat","w+");
+	FILE *datafile = fopen("Outputs/VentERP_DOMINATE_MCELL_antibody30_data.dat","w+");
+	FILE *erpfile = fopen("Outputs/VentERP_DOMINATE_MCELL_antibody30.dat","w+");
 	#endif
 
 
@@ -221,17 +216,17 @@ int main(int argc, char *argv[])
 		// re-initialize for every iteration.  
 		// MUST BE RE-INITIALIZE AGAIN HERE!!!
 		#ifdef EPI1
-		initfile = fopen("SingleCell/TP06InitialValues_HOMO_EPI_ANTI60.dat","r");
+		initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","r");
 		cell->readinAllStates(initfile);
 		#endif
 
 		#ifdef ENDO1
-		initfile = fopen("SingleCell/TP06InitialValues_HOMO_ENDO_ANTI60.dat","r");
+		initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO_antibody60.dat","r");
 		cell->readinAllStates(initfile);
 		#endif
 
 		#ifdef MCELL1
-		initfile = fopen("SingleCell/TP06InitialValues_HOMO_MCELL_ANTI60.dat","r");
+		initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL_antibody60.dat","r");
 		cell->readinAllStates(initfile);
 		#endif
 
@@ -263,9 +258,10 @@ int main(int argc, char *argv[])
 			}
 
 			cell->update();
-			fprintf(s1s2file,"%4.10f\t",time);
-			fprintf(s1s2file,"%4.10f\t",cell->getV());
-			fprintf(s1s2file,"\n");
+			//**************************************************控制是否需要输出文件，我们不需要膜电压的文件，我们只要ERP的值
+		//	fprintf(s1s2file,"%4.10f\t",time);
+		//	fprintf(s1s2file,"%4.10f\t",cell->getV());
+		//	fprintf(s1s2file,"\n");
 
 			if(time >= stimS2start)
 			{

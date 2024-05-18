@@ -63,12 +63,9 @@ int main(int argc, char *argv[])
 	// cell->setCORM2(30);
 	// CellPointer cell = new CellType(EPI);
 	// CellPointer cell = new CellType();
-
-
-
 	#ifdef VENTRICLE
-	FILE *datafile = fopen("Outputs/VentriSingleCellResults_SQT6_MCELL.dat","w+");
-	FILE *apdfile = fopen("Outputs/VentriSingleCellStats.dat","w+");
+	FILE *datafile = fopen("Outputs/VentriSingleCellResults_dominate_EPI_antibody60.dat","w+");
+	FILE *apdfile = fopen("Outputs/VentriSingleCellStats_dominate_EPI_antibody60.dat","w+");
 	//FILE *initfile = fopen("SingleCell/TP06InitialValues_EPI.dat","w+");
 	#endif
 
