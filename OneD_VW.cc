@@ -15,8 +15,8 @@
 
 //#include "SingleCell/HumanVentricle1.cpp"
 // #include "SingleCell/ORd.cc"
-// #include "SingleCell/TPORd.cc"
-#include"SingleCell/TP06.h"
+ #include "SingleCell/TPORd.cc"  //****************************************我们的SingleCell中有两种单细胞模型，分别是TP06和TPORd，这里用的是TPORd
+//#include"SingleCell/TP06.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -31,8 +31,9 @@ using namespace std;
 // #define SAN
 // #define ATRIA
 
-//******************1.选择类型；2.后期可能需要选择BCL；3.在跑易感创的时候需要选择模式，上界、下界、中间阶段；如果用new的话可能numS1需要更改。4.tp06.cc需要随着这个改变
+//******************1.选择类型；2.后期可能需要选择BCL；3.在跑易感创的时候需要选择模式，上界、下界、中间阶段；如果用new的话可能numS1需要更改。4.TPORd.cc/tp06.cc需要随着这个改变
 //******************5.更改上下界，更改model;6.要更换initial文件，有两处地点需要更换。
+//**********************3种模式的选择在210行左右
 #define VENT
 
 //#define WT
@@ -99,7 +100,10 @@ int main(int argc, char *argv[])
 	// strand initilization, diffusion stuff
 	int cellNum = sanCellNum + atrialCellNum + epiCellNum + mCellNum + endoCellNum; // number of cells in OneD strand
 	typedef CellType* CellPointer;
-	TP06* strand[cellNum]; // note that constructor contains the initializer
+	//***********************************************************************************不同的细胞类型这里需要更换
+	//TP06* strand[cellNum]; // note that constructor contains the initializer
+	TPORd* strand[cellNum];
+
 	double coeff[cellNum]; // diffusion parameters for each cell
 	double dcoeff_dx[cellNum]; // first order derivative for each cell
 	double oldV[cellNum];
@@ -136,28 +140,40 @@ int main(int argc, char *argv[])
 		 FILE *initfile;
 		if(i >= 0 && i < endoCellNum)
 		{
-			strand[i] = new TP06(ENDO);			
+			//strand[i] = new TP06(ENDO);	
+			strand[i] = new TPORd(ENDO);	
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat","r");
+
+			 //initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat","r");
+			 initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_ENDO.dat","r");
+
 			 strand[i]->readinAllStates(initfile);
 			 fclose(initfile);
 		}
 		else if (i < endoCellNum + mCellNum)
 		{
-			strand[i] = new TP06(MCELL);
+			//strand[i] = new TP06(MCELL);
+			strand[i] = new TPORd(MCELL);
+
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat","r");
+			// initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat","r");
+			 initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_MCELL.dat","r");
+
 			 strand[i]->readinAllStates(initfile);
 			 fclose(initfile);
 		}
 		else // i < total cellnum
 		{
-			strand[i] = new TP06(EPI);
+			//strand[i] = new TP06(EPI);
+			strand[i] = new TPORd(EPI);
+
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat","r");
+			 //initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat","r");
+			 initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_EPI.dat","r");
+
 			 strand[i]->readinAllStates(initfile);
 			 fclose(initfile);
 		}	
@@ -173,17 +189,22 @@ int main(int argc, char *argv[])
 
 	
 	#ifdef WT
-	FILE *datafile = fopen("Outputs/VentOneDResults_VW_WT.dat","w+");
+	//FILE *datafile = fopen("Outputs/VentOneDResults_VW_WT.dat","w+");
+	FILE *datafile = fopen("Outputs/VentOneDResults_TPORd_VW_WT.dat","w+");
+
 	#endif
 #ifdef HETE
-	FILE* datafile = fopen("Outputs/VentOneDResults_VW_HETE.dat", "w+");
+	//FILE* datafile = fopen("Outputs/VentOneDResults_VW_HETE.dat", "w+");
+	FILE* datafile = fopen("Outputs/VentOneDResults_TPORd_VW_HETE.dat", "w+");
 #endif
 #ifdef HOMO
-	FILE* datafile = fopen("Outputs/VentOneDResults_VW_HOMO.dat", "w+");
+	//FILE* datafile = fopen("Outputs/VentOneDResults_VW_HOMO.dat", "w+");
+	FILE* datafile = fopen("Outputs/VentOneDResults_TPORd_VW_HOMO.dat", "w+");
 #endif
 
 #ifdef DOMINATE
-	FILE* datafile = fopen("OutputsVW/VentOneDResults_VW_DOMINATE.dat", "w+");
+	//FILE* datafile = fopen("OutputsVW/VentOneDResults_VW_DOMINATE.dat", "w+");
+	FILE* datafile = fopen("OutputsVW/VentOneDResults_TPORd_VW_DOMINATE.dat", "w+");
 #endif
 	
 
@@ -191,13 +212,13 @@ int main(int argc, char *argv[])
 	int step = 0;
 	FILE* FF;
 
-	double left  = 360;  //200//351.1 ~ 356
+	double left  = 200;  //200//351.1 ~ 356
 	double right = 800; //800  //351.1 ~ 356
-	//#define MODE1
+	#define MODE1
 	//#define MODE2 //下界
-	#define MODE3 //上界
+	//#define MODE3 //上界
 
-	int tempstart = 90;     //原始是60 
+	int tempstart =40;     //原始是60 
 
 	double boundary = 10; //negative
 	double s2startTime = 0.5*(left + right);
@@ -230,7 +251,9 @@ int main(int argc, char *argv[])
 
 				// read in initial values (this is because the original init values is not stable yet)
 				// if the initfile is not available, run the initialization.cc first
-				 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat","r");
+				 //initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat","r");
+				 initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_ENDO.dat","r");
+
 				 strand[i]->readinAllStates(initfile);
 				 fclose(initfile);
 			}
@@ -239,7 +262,9 @@ int main(int argc, char *argv[])
 
 				// read in initial values (this is because the original init values is not stable yet)
 				// if the initfile is not available, run the initialization.cc first
-				 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat","r");
+				//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat","r");
+				initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_MCELL.dat","r");
+
 				 strand[i]->readinAllStates(initfile);
 				 fclose(initfile);
 			}
@@ -247,7 +272,8 @@ int main(int argc, char *argv[])
 			{
 				// read in initial values (this is because the original init values is not stable yet)
 				// if the initfile is not available, run the initialization.cc first
-				 initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat","r");
+				// initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat","r");
+				 initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_EPI.dat","r");
 				 strand[i]->readinAllStates(initfile);
 				 fclose(initfile);
 			}

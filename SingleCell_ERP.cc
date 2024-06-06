@@ -13,8 +13,8 @@
  */
 
 
-#include "SingleCell/TP06.h"
-// #include "SingleCell/TPORd.cc"
+//#include "SingleCell/TP06.h"
+ #include "SingleCell/TPORd.cc"
 
 using namespace std;
 
@@ -23,10 +23,10 @@ using namespace std;
 // #define ATRIA
 #define VENTRICLE
 #define EPSILON 1e-7
-//*********************************1.选择构造文件细胞，注意有两处，S1和S2两处地方都要选择********************2.下面还需要修改输出文件的名字。3.修改tp06.cc里面的文件，确认是处于病理状态还是药理状态。
-//#define ENDO1
-// #define EPI1
-#define MCELL1
+//**************1.选择构造文件细胞，注意有两处，S1和S2两处地方都要选择********2.下面还需要修改输出文件的名字。3.修改tp06.cc里面的文件，确认是处于病理状态还是药理状态。
+#define ENDO1
+ //#define EPI1
+//#define MCELL1
 
 int main(int argc, char *argv[])
 {
@@ -48,8 +48,12 @@ int main(int argc, char *argv[])
 	// typedef ORdHumanVentricle* CellPointer;
 	// typedef NeonatalRatAtria CellType;
 	// typedef NeonatalRatAtria* CellPointer;
-	typedef TP06 CellType;
-	typedef TP06* CellPointer;
+	
+	//****************************************我们的SingleCell中有两种单细胞模型，分别是TP06和TPORd，这里用的是TPORd。**********************
+	//typedef TP06 CellType;
+	//typedef TP06* CellPointer;
+	typedef TPORd CellType;
+	typedef TPORd* CellPointer;
 
 	// statistics for single cell
 	double apd20;
@@ -74,25 +78,28 @@ int main(int argc, char *argv[])
 
 	#ifdef EPI1
 	CellPointer cell = new CellType(EPI);
-	initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","r"); // NOTE THERE ARE TWO INIT FILES TO BE CHANGED!!!
+	//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","r"); // NOTE THERE ARE TWO INIT FILES TO BE CHANGED!!!
+	initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_EPI.dat","r");
 	cell->readinAllStates(initfile);
 	#endif 
 
 	#ifdef ENDO1
 	CellPointer cell = new CellType(ENDO);
-	initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO_antibody60.dat","r");
+	//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO_antibody60.dat","r");
+	initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_ENDO.dat","r");
 	cell->readinAllStates(initfile);
 	#endif 
 
 	#ifdef MCELL1
 	CellPointer cell = new CellType(MCELL);
-	initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL_antibody60.dat","r");
+	//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL_antibody60.dat","r");
+	initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_MCELL.dat","r");
 	cell->readinAllStates(initfile);
 	#endif 
 
 	#ifdef VENTRICLE
-	FILE *datafile = fopen("Outputs/VentERP_DOMINATE_MCELL_antibody30_data.dat","w+");
-	FILE *erpfile = fopen("Outputs/VentERP_DOMINATE_MCELL_antibody30.dat","w+");
+	//FILE *datafile = fopen("Outputs/VentERP_TPORd_DOMINATE_ENDO.dat","w+");
+	FILE *erpfile = fopen("Outputs/VentERP_TPORd_DOMINATE_ENDO.dat","w+");
 	#endif
 
 
@@ -216,26 +223,29 @@ int main(int argc, char *argv[])
 		// re-initialize for every iteration.  
 		// MUST BE RE-INITIALIZE AGAIN HERE!!!
 		#ifdef EPI1
-		initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","r");
+		//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","r");
+		initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_EPI.dat","r");
 		cell->readinAllStates(initfile);
 		#endif
 
 		#ifdef ENDO1
-		initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO_antibody60.dat","r");
+		//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO_antibody60.dat","r");
+		initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_ENDO.dat","r");
 		cell->readinAllStates(initfile);
 		#endif
 
 		#ifdef MCELL1
-		initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL_antibody60.dat","r");
+		//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL_antibody60.dat","r");
+		initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_MCELL.dat","r");
 		cell->readinAllStates(initfile);
 		#endif
 
 		stimS2start = stimStart + apd90 + DI;//start from APD90 to search for the refractory point.
 
-		// write file
+		// write file                            ******可以选择不输出s1s2文件,要输出s1说文件的话需要手动更改文件名
 		FILE *s1s2file;
 		char s1s2filename[200];
-		sprintf(s1s2filename, "Outputs/S1S2@%.1f.dat", fabs(stimS2start));
+		sprintf(s1s2filename, "Outputs/TPORd_ENDO_S1S2@%.1f.dat", fabs(stimS2start));
 		s1s2file = fopen(s1s2filename,"w");
 		
 
@@ -259,9 +269,9 @@ int main(int argc, char *argv[])
 
 			cell->update();
 			//**************************************************控制是否需要输出文件，我们不需要膜电压的文件，我们只要ERP的值
-		//	fprintf(s1s2file,"%4.10f\t",time);
-		//	fprintf(s1s2file,"%4.10f\t",cell->getV());
-		//	fprintf(s1s2file,"\n");
+			fprintf(s1s2file,"%4.10f\t",time);
+			fprintf(s1s2file,"%4.10f\t",cell->getV());
+			fprintf(s1s2file,"\n");
 
 			if(time >= stimS2start)
 			{
@@ -283,6 +293,7 @@ int main(int argc, char *argv[])
 		if(erpfound)
 		{
 			cout << "ERP found! ERP = " << stimS2start - stimStart << " " << s2maxV<< endl ;
+			fprintf(erpfile, "ERP found! ERP = %.10f   s2maxV= %.10f ",stimS2start - stimStart,s2maxV);
 			break;
 		}
 		else
@@ -296,7 +307,7 @@ int main(int argc, char *argv[])
 
 
 	fclose(initfile);
-	fclose(datafile);
+	//fclose(datafile);
 	return 0;
 }
 

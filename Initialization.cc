@@ -15,9 +15,9 @@
 // #include "SingleCell/NeonatalRatAtria.cc"
 // #include "SingleCell/RatSAN.cc"
 // #include "SingleCell/GrandiCaMK.cc"
-#include "SingleCell/TP06.h"
+//#include "SingleCell/TP06.h"
 // #include "SingleCell/ToRORD.cc"
-// #include "SingleCell/TPORd.cc"
+ #include "SingleCell/TPORd.cc"  //****************************************我们的SingleCell中有两种单细胞模型，分别是TP06和TPORd，这里用的是TPORd。**********************
 
 using namespace std;
 
@@ -39,16 +39,20 @@ int main(int argc, char *argv[])
 	double stimStrength = -52; // pA/pF
 	double stimDuration = 1.0;	// ms
 	double stimStart = 50.0; // ms  // indicates the time point of beginning stimulus in a cycle
-	typedef TP06 CellType;
-	typedef TP06* CellPointer;
+	//typedef TP06 CellType;
+	//typedef TP06* CellPointer;
+	typedef TPORd CellType;
+	typedef TPORd* CellPointer;
 	#endif
 
 
 	// --------start simulation--------
+	//*************************************************************1.手动更改细胞类型	2.更改输出文件名字	3.输出文件要和TPORd.cc中细胞的类型相对应一定要检查。
 	// note that constructor contains the initializer
-	CellPointer cell = new CellType(EPI);          //EPI   MCELL  ENDO
+	CellPointer cell = new CellType(MCELL);          //EPI   MCELL  ENDO
 	#ifdef VENT
-	FILE *initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI_antibody60.dat","w+");
+	//FILE *initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_EPI_antibody60.dat","w+");  //有抗体的文件名称规范
+	FILE *initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_MCELL.dat","w+");  			 //没有抗体的文件名称规范
 	#endif
 	// apply user configuration about dt
 	cell->setDt(dt);

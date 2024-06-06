@@ -13,8 +13,8 @@
  */
 
 
-#include "SingleCell/TP06.h" 
-
+//#include "SingleCell/TP06.h" 
+#include "SingleCell/TPORd.cc"
 
 using namespace std;
 
@@ -37,8 +37,12 @@ int main(int argc, char *argv[])
 	double stimStrength = -52;//-12;//-0.6e-3; // pA/pF   -6.0pA/pF(-0.6nA) for RatAtrial // -12.5pA/pF for CaMKII; -8.78pA for neonatalRatAtrial
 	double stimDuration = 1;//3;   // ms
 	double stimStart = 50.0;   // 20 ms  // indicates the time point of beginning stimulus in a cycle
-	typedef TP06 CellType;
-	typedef TP06* CellPointer;
+
+	//****************************************我们的SingleCell中有两种单细胞模型，分别是TP06和TPORd，这里用的是TPORd。**********************
+	//typedef TP06 CellType;
+	//typedef TP06* CellPointer;
+	typedef TPORd CellType;
+	typedef TPORd* CellPointer;
 
 	// statistics for single cell
 	double apd20;
@@ -55,17 +59,17 @@ int main(int argc, char *argv[])
 
 
 	// --------start simulation--------
-
+	//**********************手动修改细胞类型		2.需要手动修改输出文件的文件名
 
 
 	// note that constructor contains the initializer
-	CellPointer cell = new CellType(EPI); // LVEPI for rats! EPI for human!
+	CellPointer cell = new CellType(MCELL); // LVEPI for rats! EPI for human!                **********!!!!!!!MCELL要改成输出倒数第二个周期！！***
 	// cell->setCORM2(30);
 	// CellPointer cell = new CellType(EPI);
 	// CellPointer cell = new CellType();
 	#ifdef VENTRICLE
-	FILE *datafile = fopen("Outputs/VentriSingleCellResults_dominate_EPI_antibody60.dat","w+");
-	FILE *apdfile = fopen("Outputs/VentriSingleCellStats_dominate_EPI_antibody60.dat","w+");
+	FILE *datafile = fopen("Outputs/VentriSingleCellResults_TPORd_HOMO_MCELL.dat","w+");
+	FILE *apdfile = fopen("Outputs/VentriSingleCellStats_TPORd_HOMO_MCELL.dat","w+");
 	//FILE *initfile = fopen("SingleCell/TP06InitialValues_EPI.dat","w+");
 	#endif
 
@@ -99,11 +103,12 @@ int main(int argc, char *argv[])
 		cell->update();
 
 		// 3. Output file, write file each 1ms 
-		if(step%(int(0.02/dt)) == 0 && floor(time/BCL) >= numS1 - 1) // if only focus on the last cycle
-		// if(step%(int(0.1/dt)) == 0) // 5*dt = 1ms once
+		if(step%(int(0.02/dt)) == 0 && floor(time/BCL) >= numS1 - 1) // if only focus on the last cycle              如果只输出最后一个周期
+		//if(step%(int(0.1/dt)) == 0) // 5*dt = 1ms once
+		//if(step%(int(0.02/dt)) == 0 && floor(time/BCL) >= numS1 - 2 && floor(time/BCL) < numS1 - 1)                //输出倒数第二个周期
 		{
-			// fprintf(datafile,"%4.10f\t", time);
-			fprintf(datafile,"%4.10f\t", fmod(time,BCL)); // if only focus on the last cycle
+			 //fprintf(datafile,"%4.10f\t", time);                                                                   //输出所有周期
+			fprintf(datafile,"%4.10f\t", fmod(time,BCL)); // if only focus on the last cycle*************************如果只输出最后一个周期
 			// fprintf(datafile,"%4.10f\t", time - (numS1 - 2)*BCL ); // if focus on the last two
 
 			// for alternans

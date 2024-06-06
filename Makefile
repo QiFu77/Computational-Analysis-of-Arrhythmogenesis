@@ -1,6 +1,6 @@
 all: SingleCell OneD TwoD
 
-common = SingleCell/Cell.cc SingleCell/TP06.h SingleCell/TP06.cc
+common = SingleCell/Cell.cc  SingleCell/TPORd.cc SingleCell/TP06.h SingleCell/TP06.cc
 
 CC  	=	g++
 
@@ -13,7 +13,7 @@ CFLAGS3 =   -arch sm_61 -Xptxas -dlcm=cg
 Initialization: $(common) Initialization.cc
 	$(CC) $(CFLAGS) -o model_initialization $(common) Initialization.cc
 
-SingleCell_TP06: $(common) SingleCell.cc
+SingleCell: $(common) SingleCell.cc
 	$(CC) $(CFLAGS) -o model_SingleCell $(common) SingleCell.cc
 
 SingleCell_ERP: $(common) SingleCell_ERP.cc
@@ -24,6 +24,9 @@ OneD_VW: $(common) OneD_VW.cc
 
 OneD: $(common) OneD.cc
 	$(CC) $(CFLAGS) $(CFLAGS2) -o model_oned $(common) OneD.cc
+
+OneD_BCL: $(common) OneD_differentBCL.cc
+	$(CC) $(CFLAGS) $(CFLAGS2) -o model_oned_BCL $(common) OneD_differentBCL.cc
 
 TwoD: $(common) TwoD.cc
 	$(CC) $(CFLAGS) $(CFLAGS2) -o model_twod $(common) TwoD.cc
