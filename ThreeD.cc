@@ -9,13 +9,19 @@
  * 
  * 
  * Author      : Shugang Zhang <zhangshugang@hotmail.com>
- * Last update : 11-12-2023
+ * Last update : 07-10-2018
  */
-
+/*
 #include "SingleCell/NeonatalRatAtria.cc"
 #include "SingleCell/RatSAN.cc"
 #include "SingleCell/HumanVentricle.cc"
 #include "SingleCell/GrandiCaMK.cc"
+*/
+
+//**********************************************************注意！在跑病理还是药理的时候要确保SingleCell中的单细胞模型处在正确的状态**********************
+
+//#include "SingleCell/TP06.h"
+#include "SingleCell/TPORd.cc"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -33,7 +39,7 @@ using namespace std;
 #define NY 102
 #define NZ 102 
 
-// anisotropic         //各向异性
+// anisotropic
 #define D1 0.1171 //0.1171 // 0.0195 // 0.1171
 #define D2 D1/4.0
 #define D3 D1/9.0
@@ -69,7 +75,7 @@ int*** constructGeometry()
 	}
 
 	printf("Construct geometry from files...\n");
-	FILE *geoFile = fopen("Geometry/BensonHumanVentricle_102*102*102/heterogeneity.txt", "rt");                       //文件名有一点问题，不能有*，  后续可能会把*号改成 _
+	FILE *geoFile = fopen("Geometry/BensonHumanVentricle_102*102*102/heterogeneity.txt", "rt");                  //文件名已更改.
 	
 	
 	int c;// cell type
@@ -137,7 +143,16 @@ Cell* *** constructTissue(int ***geo)
 					if(geo[x][y][z] == 4) celltype = 1;//1;//1; // node is epicardial
 					// FILE *initfile = fopen("SingleCell/NeonatalRatAtriaInitialValues.dat","r");
 					// tissue[x][y][z] = new ORdHumanVentricle(celltype); // Glory for test.
-					tissue[x][y][z] = new GrandiCaMKII();                                                                           //new 的对象，需要换成TP06
+
+					//
+					
+					if (geo[x][y][z] == 1 || geo[x][y][z] == 2) tissue[x][y][z] = new TPORd(ENDO);         //根据要求把它换成了TPORd单细胞模型
+					if (geo[x][y][z] == 3) tissue[x][y][z] = new TPORd(MCELL);
+					if (geo[x][y][z] == 4) tissue[x][y][z] = new TPORd(EPI);
+					
+
+					
+				//	tissue[x][y][z] = new TP06(celltype);                                                       //类名已更改.
 					tissue[x][y][z]->setDt(dt);
 				}
 				else 
@@ -401,6 +416,7 @@ Cell* *** constructTissue(int ***geo)
 
 		} 
 	}
+	cout << "construct tissue successful" << endl;                   //debug
 	return tissue;
 }
 
@@ -794,7 +810,7 @@ double**** calculateDiffDerivation(int*** geo, double**** D)
 void writeFile(int*** geo, Cell* *** tissue, int step, double dx, double dy, double dz)
 {	
 	int x,y,z;
-	char* filename = new char[50];
+	char* filename = new char[100];       
 	sprintf(filename, "Outputs/VentricleThreeDResults%04d.vtk", step);
 	FILE *datafile = fopen(filename, "wt");
 
@@ -1058,9 +1074,11 @@ int main()
 					cout << "INa = " << tissue[x][y][z]->getINa() << endl;
 					cout << "[x y z] = [" << x << " " << y << " " << z << "]" << endl;
 
+					/*
 					cout << "dvgap_dt = " << dvgap_dt << ";  tissue[x][y][z]->getDVgap_dt() = " << tissue[x][y][z]->getDVgap_dt() << endl;
 					cout << "dv_dt = " << tissue[x][y][z]->getDvdt() << endl;
 					cout << "delta = " << (dvgap_dt + tissue[x][y][z]->getDvdt())*dt << endl;						
+					*/
 					
 					cout << "geo[x][y][z] = " << geo[x][y][z] << "; volt = " << tissue[x][y][z]->getV() << endl;					
 					cout << "geo[x+1][y][z] = " << geo[x+1][y][z] << "; volt = " << tissue[x+1][y][z]->getV() << endl;
@@ -1093,8 +1111,10 @@ int main()
 
 		// output voltage.
 		// if( floor(time/BCL) == numS1 - 1) // output final cycle only
-		if(step%50 == 0) // 50*dt = 1 ms once (dt = 0.02 ms)
-			writeFile(geo, tissue, step/50, dx, dy, dz);
+		if (step % 50 == 0) // 50*dt = 1 ms once (dt = 0.02 ms)
+		{
+			writeFile(geo, tissue, step / 50, dx, dy, dz);
+		}
 
 	}// end time loop
 
