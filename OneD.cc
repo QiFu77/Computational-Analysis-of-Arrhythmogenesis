@@ -15,7 +15,8 @@
 // #include "SingleCell/NeonatalRatAtria.cc"
 // #include "SingleCell/RatSAN.cc"
 // #include "SingleCell/TP06.h"
- #include "SingleCell/TP06.h"
+// #include "SingleCell/TP06.h"
+#include "SingleCell/TPORd.cc"
 //#include "SingleCell/ToRORD.cc"
 //#include"SingleCell/TP06.cc"
 // #include "SingleCell/ToRORD.cc"
@@ -96,7 +97,8 @@ int main(int argc, char *argv[])
 	int cellNum = sanCellNum + atrialCellNum + epiCellNum + mCellNum + endoCellNum; // number of cells in OneD strand
 
 	typedef Cell* CellPointer;
-	TP06* strand[cellNum]; // note that constructor contains the initializer
+	// TP06* strand[cellNum]; // note that constructor contains the initializer
+	 TPORd* strand[cellNum];
 	double coeff[cellNum]; // diffusion parameters for each cell
 	double dcoeff_dx[cellNum]; // first order derivative for each cell
 	double oldV[cellNum];
@@ -137,28 +139,34 @@ int main(int argc, char *argv[])
 		FILE *initfile;
 		if(i >= 0 && i < endoCellNum)
 		{
-			strand[i] = new TP06(ENDO);
+			//strand[i] = new TP06(ENDO);
+			strand[i] = new TPORd(ENDO);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-		initfile = fopen("SingleCell/TP06InitialValues_WT_ENDO.dat","r");
+		// initfile = fopen("SingleCell/TP06InitialValues_WT_ENDO.dat","r");
+		initfile = fopen("SingleCell/TPORdInitialValues_WT_ENDO.dat","r");
 		strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 		fclose(initfile);
 		}
 		else if (i < endoCellNum + mCellNum)
 		{
-			strand[i] = new TP06(MCELL);
+			//strand[i] = new TP06(MCELL);
+			strand[i] = new TPORd(MCELL);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-		initfile = fopen("SingleCell/TP06InitialValues_WT_MCELL.dat","r");
+		// initfile = fopen("SingleCell/TP06InitialValues_WT_MCELL.dat","r");
+		initfile = fopen("SingleCell/TPORdInitialValues_WT_MCELL.dat","r");
 		strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 		fclose(initfile);
 		}
 		else // i < total cellnum
 		{
-			strand[i] = new TP06(EPI);
+			//strand[i] = new TP06(EPI);
+			strand[i] = new TPORd(EPI);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-		initfile = fopen("SingleCell/TP06InitialValues_WT_EPI.dat","r");
+		//initfile = fopen("SingleCell/TP06InitialValues_WT_EPI.dat","r");
+		initfile = fopen("SingleCell/TPORdInitialValues_WT_EPI.dat","r");
 		strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 		fclose(initfile);
 		}	
@@ -198,28 +206,34 @@ int main(int argc, char *argv[])
 		FILE* initfile;
 		if (i >= 0 && i < endoCellNum)
 		{
-			strand[i] = new TP06(ENDO);
+			//strand[i] = new TP06(ENDO);
+			strand[i] = new TPORd(ENDO);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat", "r");
+			//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_ENDO.dat", "r");
+			initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_ENDO.dat", "r");
 			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 			fclose(initfile);
 		}
 		else if (i < endoCellNum + mCellNum)
 		{
-			strand[i] = new TP06(MCELL);
+			// strand[i] = new TP06(MCELL);
+			strand[i] = new TPORd(MCELL);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat", "r");
+			//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_MCELL.dat", "r");
+			initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_MCELL.dat", "r");
 			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 			fclose(initfile);
 		}
 		else // i < total cellnum
 		{
-			strand[i] = new TP06(EPI);
+			// strand[i] = new TP06(EPI);
+			strand[i] = new TPORd(EPI);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat", "r");
+			//initfile = fopen("SingleCell/TP06InitialValues_DOMINATE_EPI.dat", "r");
+			initfile = fopen("SingleCell/TPORdInitialValues_DOMINATE_EPI.dat", "r");
 			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 			fclose(initfile);
 		}
@@ -229,28 +243,34 @@ int main(int argc, char *argv[])
 		FILE* initfile;
 		if (i >= 0 && i < endoCellNum)
 		{
-			strand[i] = new TP06(ENDO);
+			// strand[i] = new TP06(ENDO);
+			strand[i] = new TPORd(ENDO);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			initfile = fopen("SingleCell/TP06InitialValues_HOMO_ENDO.dat", "r");
+			// initfile = fopen("SingleCell/TP06InitialValues_HOMO_ENDO.dat", "r");
+			initfile = fopen("SingleCell/TPORdInitialValues_HOMO_ENDO.dat", "r");
 			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 			fclose(initfile);
 		}
 		else if (i < endoCellNum + mCellNum)
 		{
-			strand[i] = new TP06(MCELL);
+			// strand[i] = new TP06(MCELL);
+			strand[i] = new TPORd(MCELL);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			initfile = fopen("SingleCell/TP06InitialValues_HOMO_MCELL.dat", "r");
+			// initfile = fopen("SingleCell/TP06InitialValues_HOMO_MCELL.dat", "r");
+			initfile = fopen("SingleCell/TPORdInitialValues_HOMO_MCELL.dat", "r");
 			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 			fclose(initfile);
 		}
 		else // i < total cellnum
 		{
-			strand[i] = new TP06(EPI);
+			// strand[i] = new TP06(EPI);
+			strand[i] = new TPORd(EPI);
 			// read in initial values (this is because the original init values is not stable yet)
 			// if the initfile is not available, run the initialization.cc first
-			initfile = fopen("SingleCell/TP06InitialValues_HOMO_EPI.dat", "r");
+			// initfile = fopen("SingleCell/TP06InitialValues_HOMO_EPI.dat", "r");
+			initfile = fopen("SingleCell/TPORdInitialValues_HOMO_EPI.dat", "r");
 			strand[i]->readinAllStates(initfile);   // must be uncommented to get 0.719 m/s
 			fclose(initfile);
 		}
@@ -364,7 +384,8 @@ int main(int argc, char *argv[])
 
 		// 3. output file. Unfortunately, this part cannot run in paralell
 	//	if( floor(time/BCL) >= numS1 - 10&& step % 10 == 0) // output final cycle only   ,debug并且只输出每0.2ms
-		if(floor(time / BCL) >= numS1 - 1 && step%10 == 0) // 50*dt = 1 ms once
+	//if(floor(time / BCL) >= numS1 - 1 && step%10 == 0) // 50*dt = 1 ms once
+			if(step%10 == 0)                              //50*dt = 1 ms once
 		{
 			for(int j = 0; j < cellNum; j++)
 			{
